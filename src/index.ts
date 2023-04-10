@@ -32,7 +32,8 @@ export default {
             const authRes = await fetch("https://kiosk-backend.cusmartevents.com/api/user", { headers: { authorization } })
             if (authRes.status !== 200) return new Response(null, { status: 403 });
 
-            const person = await fetch(env.URL + searchParams.get("id"), {
+            const id = searchParams.get("id");
+            const person = await fetch(env.URL + (id?.length === 5 ? "proxid" : "personid") + "?id=" + searchParams.get("id"), {
                 headers: {
                     "x-functions-key": env.API_KEY
                 }
