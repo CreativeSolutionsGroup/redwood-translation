@@ -1,3 +1,6 @@
 name = "redwood-translation"
 main = "src/index.ts"
 compatibility_date = "2023-02-21"
+kv_namespaces = [
+    { binding = "STUDENT_CACHE", id = "c2cb9d7d71f74efd9bf7189d264d087e", preview_id = "cb75ed6313744e558db92facc140d0f6" }
+]

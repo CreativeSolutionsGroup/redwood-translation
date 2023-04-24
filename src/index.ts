@@ -1,6 +1,7 @@
 export interface Env {
     URL: string;
     API_KEY: string;
+    STUDENT_CACHE: KVNamespace;
 }
 
 interface Input {
@@ -33,13 +34,23 @@ export default {
             if (authRes.status !== 200) return new Response(null, { status: 403 });
 
             const id = searchParams.get("id");
-            const person = await fetch(env.URL + (id?.length === 5 ? "proxid" : "personid") + "?id=" + searchParams.get("id"), {
-                headers: {
-                    "x-functions-key": env.API_KEY
+            let response: string | null = null;
+            if (id?.length === 5) {
+                response = await env.STUDENT_CACHE.get(id);
+            }
+            if (response === null) {
+                const person = await fetch(env.URL + (id?.length === 5 ? "proxid" : "personid") + "?id=" + searchParams.get("id"), {
+                    headers: {
+                        "x-functions-key": env.API_KEY
+                    }
+                });
+                response = JSON.stringify(await person.json());
+                if (id !== null) {
+                    env.STUDENT_CACHE.put(id, response);
                 }
-            })
+            }
 
-            return new Response(JSON.stringify(await person.json()), {
+            return new Response(response, {
                 headers: {
                     "content-type": "application/json"
                 }
